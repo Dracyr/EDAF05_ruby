@@ -1,16 +1,3 @@
-def build_tree
-  @tree = {}
-  @words.each do |w|
-    @tree[w] = []
-    @words.each do |compare|
-      contains = (compare.scan(/./).contains_all? w[1..4].scan(/./))
-      @tree[w] << compare if (w != compare) and contains
-    end
-  end
-  puts @tree if @debug
-  @tree
-end
-
 class Array
   def contains_all? other
     other = other.dup
@@ -20,34 +7,39 @@ class Array
 end
 
 def build_for node
-  neighbours = []
-  @words.each do |compare|
-    it_contains = (compare.scan(/./).contains_all? node[1..4].scan(/./))
-    neighbours << compare if (node != compare) and it_contains
+  unless @tree.has_key? node
+    neighbours = []
+    @words.each do |compare|
+      it_contains = (compare.scan(/./).contains_all? node[1..4].scan(/./))
+      neighbours << compare if (node != compare) and it_contains
+    end
+    @tree[node] = neighbours
+  else
+    @tree[node]
   end
-  neighbours
 end
 
 def traverse from, to
+  @tree = {}
   queue = [from]
   distance = 0
-  visited = []
-  while not queue.empty?
+  distances = {}
+  distances[from] = 0
+  discovered = []
+  discovered << from
+  until queue.empty?
     node = queue.shift
-  	puts "Halldå där" if visited.include? node
-    visited << node
-    puts "#{visited}"
-    break if node == to
+    #break if node == to
     distance += 1
     edges = build_for node
-    unless edges.include? to
-      edges -= visited
-      visited += edges
-      queue << edges unless edges.empty?
-      queue.flatten!
-    else
+    if edges.include? to
       node = to
       break
+    elsif not edges.empty?
+      edges -= discovered
+      discovered += edges
+      edges.each {|e| distances[e] = distances[node] +1}
+      queue = queue | edges
     end
   end
   distance = -1 unless node == to
