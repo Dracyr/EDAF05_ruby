@@ -10,8 +10,9 @@ def build_for node
   unless @tree.has_key? node
     neighbours = []
     @words.each do |compare|
-      it_contains = (compare.scan(/./).contains_all? node[1..4].scan(/./))
-      neighbours << compare if (node != compare) and it_contains
+      unless node == compare
+        neighbours << compare if (compare.scan(/./).contains_all? node[1..4].scan(/./))
+      end
     end
     @tree[node] = neighbours
   else
