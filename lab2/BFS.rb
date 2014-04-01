@@ -20,30 +20,26 @@ def build_for node
 end
 
 def traverse from, to
-  @tree = {}
+  return 0 if from == to
   queue = [from]
-  distance = 0
-  distances = {}
-  distances[from] = 0
-  discovered = []
-  discovered << from
+  discovered = [from]
+  distances = { from => 0 }
   until queue.empty?
     node = queue.shift
-    #break if node == to
-    distance += 1
     edges = build_for node
-    if edges.include? to
-      node = to
-      break
-    elsif not edges.empty?
-      edges -= discovered
-      discovered += edges
-      edges.each {|e| distances[e] = distances[node] +1}
-      queue = queue | edges
+    edges -= discovered
+    unless edges.empty?
+      if edges.include? to
+        distances[to] = distances[node] + 1
+        break
+      else
+        discovered += edges
+        edges.each {|e| distances[e] = distances[node] +1}
+        queue.push(*edges)
+      end
     end
   end
-  distance = -1 unless node == to
-  puts distance
+  distances[to] || -1
 end
 
 def readlines filename
@@ -57,7 +53,8 @@ def parse dat_file, in_file
 end
 
 def run
-  @words_in.each { |pair| traverse(pair.first, pair.last) }
+  @tree = {}
+  @words_in.each { |pair| puts traverse(pair.first, pair.last) }
 end
 
 @debug = false
