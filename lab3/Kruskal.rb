@@ -2,7 +2,7 @@
 class UnionFind
   def initialize
     @leaders = {}
-    @leaders.default = proc{ |hash, key| hash[key] = key }
+    #@leaders.default_proc = proc{ |hash, key| hash[key] = key }
   end
 
   def connected?(city1,city2)
@@ -16,7 +16,7 @@ class UnionFind
 end
 
 def run_kruskal
-  set = UnionFind.new
+  set = UnionFind.new { |hash, key| hash[key] = key }
   minimum_spanning_tree = []
   edges = []
 
