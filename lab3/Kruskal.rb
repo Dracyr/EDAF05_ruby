@@ -29,7 +29,7 @@ def run_kruskal
       edges << {:from => city1, :to => city2, :weight => weight}
     end
   end
-  edges.sort_by! { |x| x[:weight]}
+  edges = edges.sort_by { |x| x[:weight]}
 
   edges.each do |edge|
     if !set.connected?(edge[:from], edge[:to])
