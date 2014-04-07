@@ -2,7 +2,7 @@
 class UnionFind
   def initialize
     @leaders = {}
-    @leaders.default_proc = proc{ |hash, key| hash[key] = key }
+    @leaders.default = proc{ |hash, key| hash[key] = key }
   end
 
   def connected?(city1,city2)
