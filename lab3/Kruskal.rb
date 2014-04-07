@@ -15,7 +15,7 @@ class UnionFind
 end
 
 def run_kruskal
-  set = UnionFind.new #
+  set = UnionFind.new
   minimum_spanning_tree = []
   edges = []
 
@@ -23,15 +23,15 @@ def run_kruskal
     if line.include? '--'
       weight = line.slice!(/ \[\d+\]/).slice(/\d+/).to_i
       cities = line.split("--")
-      city1 = cities.first
-      city2 = cities.last.gsub(/\n/, "")
-      edges << {:from => city1, :to => city2, :weight => weight}
+      edges << {:from => cities.first,
+                :to   => cities.last.gsub(/\n/, ""),
+                :weight => weight}
     end
   end
   edges = edges.sort_by { |x| x[:weight]}
 
   edges.each do |edge|
-    if !set.connected?(edge[:from], edge[:to])
+    unless set.connected?(edge[:from], edge[:to])
       minimum_spanning_tree << edge
       set.union(edge[:from], edge[:to])
     end
