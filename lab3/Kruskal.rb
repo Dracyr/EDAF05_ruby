@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 class UnionFind
   def initialize
     @leaders = {}
