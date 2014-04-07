@@ -45,5 +45,5 @@ def read filepath
   @file ||= File.readlines(filepath)
 end
 
-read '../testdata/lab3/USA-highway-miles.in'
+read ARGV[0]
 run_kruskal
