@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 class UnionFind
   def initialize
-    @leaders = {}
-    #@leaders.default_proc = proc{ |hash, key| hash[key] = key }
+    @leaders = Hash.new { |hash, key| hash[key] = key }
   end
 
   def connected?(city1,city2)
@@ -16,7 +15,7 @@ class UnionFind
 end
 
 def run_kruskal
-  set = UnionFind.new { |hash, key| hash[key] = key }
+  set = UnionFind.new #
   minimum_spanning_tree = []
   edges = []
 
@@ -29,7 +28,7 @@ def run_kruskal
       edges << {:from => city1, :to => city2, :weight => weight}
     end
   end
-  edges = edges.sort_by { |x| x[:weight]}
+  edges.sort_by! { |x| x[:weight]}
 
   edges.each do |edge|
     if !set.connected?(edge[:from], edge[:to])
