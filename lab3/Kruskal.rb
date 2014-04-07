@@ -26,7 +26,7 @@ def run_kruskal
       cities = line.split("--")
       city1 = cities.first
       city2 = cities.last.gsub(/\n/, "")
-      edges << {from: city1, to: city2, weight: weight}
+      edges << {:from => city1, :to => city2, :weight => weight}
     end
   end
   edges.sort_by! { |x| x[:weight]}
