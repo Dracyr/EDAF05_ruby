@@ -30,7 +30,7 @@ def closest_recursive(points)
   if points.length <= 3
     return closest_bruteforce(points)
   end
-  points.sort_by! {|p| p.x}
+  points = points.sort_by {|p| p.x}
   mid = (points.length / 2)
   points_left = points[0,mid]
   points_right = points[mid..-1]
