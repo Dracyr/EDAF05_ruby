@@ -134,17 +134,7 @@ def parse filepath
   all_stuff
 end
 
-def parse_names filepath
-  file ||= File.readlines(filepath)
-  all_names = []
-  file.each do |line|
-      all_names << line.split(':').first if line.include?(':')
-  end
-  all_names
-end
-
 fasta_data = parse ARGV[0]
-fasta_hash = Hash[fasta_data.map {|key, value| [key, value]}]
 fasta_data = fasta_data.permutation(2).to_a.uniq { |s| s.flatten.sort }
 fasta_data.each do |perm|
   sequence_alignment perm[0], perm[1]
