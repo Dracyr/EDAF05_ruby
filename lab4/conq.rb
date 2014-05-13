@@ -12,74 +12,55 @@ class Point
   end
 end
 
-def bruteforce(points)
-  mindist, minpts = Float::MAX, []
+def closest_bruteforce(points)
+  min_dist = Float::MAX
   points.length.times do |i|
     (i+1).upto(points.length - 1) do |j|
       dist = points[i].distance_to points[j]
-      if dist < mindist
-        mindist = dist
-        minpts = [points[i], points[j]]
-      end
+      min_dist = dist if dist < min_dist
     end
   end
-  [mindist, minpts]
+  min_dist
 end
 
 def closest_recursive(points)
-  if points.length <= 3
-    return bruteforce(points)
-  end
-  points.sort_by! {|p| p.x}
+  return closest_bruteforce(points) if points.length <= 3
+
+  points = points.sort_by {|p| p.x}
   mid = (points.length / 2)
   points_left = points[0,mid]
-  points_right = points[mid..-1]
 
-  min_left, pair_left = closest_recursive(points_left)
-  min_right, pair_right = closest_recursive(points_right)
+  left = closest_recursive(points_left)
+  right = closest_recursive(points[mid..-1])
 
-  if min_left < min_right
-    min_dist, min_pair = min_left, pair_left
-  else
-    min_dist, min_pair = min_right, pair_right
-  end
+  min_dist = [left, right].min
 
-  yP = points.find_all {|p| (points_left[-1].x - p.x).abs < min_dist}.sort_by {|p| p.y}
+  yP = points.find_all { |p| (points_left[-1].x - p.x).abs < min_dist}.sort_by {|p| p.y}
   closest = Float::MAX
-  closestPair = []
-  0.upto(yP.length - 2) do |i|
+  0.upto(yP.length - 1) do |i|
     (i+1).upto(yP.length - 1) do |k|
       break if (yP[k].y - yP[i].y) >= min_dist
       dist = yP[i].distance_to yP[k]
-      if dist < closest
-        closest = dist
-        closestPair = [yP[i], yP[k]]
-      end
+      closest = dist if dist < closest
     end
   end
-  if closest < min_dist
-    [closest, closestPair]
-  else
-    [min_dist, min_pair]
-  end
+  closest < min_dist ? closest : min_dist
 end
 
 def parse filepath
   file ||= File.readlines(filepath)
-
   points = []
   file.each do |line|
-    unless (line.strip.empty? || line.include?(':') || line.include?('NODE_COORD_SECTION') || (line.include? 'EOF'))
-      points << Point.new(*line.split)
-    end
+    points << Point.new(*line.split) unless (line.split.length != 3) || line.include?(':')
   end
   points
 end
 
 path = ARGV[0]
-points = parse path
+if path.split('.').last == "tsp"
+  points = parse path
 
-result = closest_recursive(points)
-#ps = result[1]
-#puts "Points for '#{path.split('/').last}': [#{ps[0].to_s}],[#{ps[1].to_s}], Distance: #{result[0]}"
-puts "../data/#{path.split('/').last}: #{points.length} #{result[0]}"
+  result = closest_recursive(points)
+  result = result.to_i if result % 1 == 0
+  puts "../data/#{path.split('/').last}: #{points.length} #{result}"
+end
