@@ -12,7 +12,7 @@ class Point
   end
 end
 
-def closest_bruteforce(points)
+def bruteforce(points)
   mindist, minpts = Float::MAX, []
   points.length.times do |i|
     (i+1).upto(points.length - 1) do |j|
@@ -28,7 +28,7 @@ end
 
 def closest_recursive(points)
   if points.length <= 3
-    return closest_bruteforce(points)
+    return bruteforce(points)
   end
   points.sort_by! {|p| p.x}
   mid = (points.length / 2)
