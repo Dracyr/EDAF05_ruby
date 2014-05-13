@@ -134,18 +134,21 @@ def parse filepath
   all_stuff
 end
 
-def parse_names filepath
+def parse_combinations filepath
   file ||= File.readlines(filepath)
-  all_names = []
+  all_combinations = []
   file.each do |line|
-      all_names << line.split(':').first if line.include?(':')
+      all_combinations << line.split(':').first if line.include?(':')
   end
-  all_names
+  all_combinations
 end
 
 fasta_data = parse ARGV[0]
-fasta_hash = Hash[fasta_data.map {|key, value| [key, value]}]
-fasta_data = fasta_data.permutation(2).to_a.uniq { |s| s.flatten.sort }
-fasta_data.each do |perm|
-  sequence_alignment perm[0], perm[1]
+h = Hash[fasta_data.map {|key, value| [key, value]}]
+combinations = parse_combinations ARGV[1]
+combinations.each do |key|
+  keys = key.split('--')
+  seq = h[keys.first]
+  seq2 = h[keys.last]
+  sequence_alignment [keys.first, seq], [keys.last, seq2]
 end
