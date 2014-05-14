@@ -2,7 +2,7 @@ def sequence_alignment x, y
   sequence = x.last
   reference = y.last
 
-  gap = -4
+  gap = -4  
 
   rows = reference.length + 1
   cols = sequence.length + 1
@@ -30,30 +30,30 @@ def sequence_alignment x, y
     score_up = a[i][j-1]
     score_left = a[i-1][j]
     if (score == score_diag + get_blosum(reference[i-1], sequence[j-1]))
-      ref = reference[i-1].chr + ref
-      seq = sequence[j-1].chr + seq
+      ref = reference[i-1] + ref
+      seq = sequence[j-1] + seq
       i -= 1
       j -= 1
     elsif (score == score_left + gap)
-      ref = reference[i-1].chr + ref
+      ref = reference[i-1] + ref
       seq = '-' + seq
       i -= 1
     elsif (score == score_up + gap)
       ref = '-' + ref
-      seq = sequence[j-1].chr + seq
+      seq = sequence[j-1] + seq
       j -= 1
     end
   end
 
   while (i > 0)
-    ref = reference[i-1].chr + ref
+    ref = reference[i-1] + ref
     seq = '-' + seq
     i -= 1
   end
 
   while (j > 0)
     ref = '-' + ref
-    seq = sequence[j-1].chr + seq
+    seq = sequence[j-1] + seq
     j -= 1
   end
 
