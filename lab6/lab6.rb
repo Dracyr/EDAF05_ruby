@@ -6,6 +6,8 @@
 
 path = "/usr/local/cs/edaf05/lab6/rail.txt"
 
+@flow = Hash.new { |hash, key| hash[key] = {} }
+
 def parse filepath
   file ||= File.readlines(filepath)
 
@@ -21,6 +23,15 @@ end
 
 def find_path source, sink
   return [] if source == sink
+
+
+end
+
+def max_flow source, sink
+  path = find_path source, sink
+  until path.empty?
+    flow = []
+  end
 
 end
 
