@@ -1,17 +1,8 @@
 #!/usr/bin/env ruby
-
-#@names = ["hej", "två", "osv"]
-#@nodes = { 'nod1' => { 'nod2' => 'capaticy', 'nod3' => cap }, 'nod2' => { 'nod1' => 'capacity'}}
-#@nodes = { |hash, key| hash[key] = {} }
-#@flow  = { |hash, key| hash[key] = {} }
-
-#path = "/usr/local/cs/edaf05/lab6/rail.txt"
-path = "../testdata/lab6/rail.txt"
-
 @nodes = Hash.new { |hash, key| hash[key] = [] }
 @flow  = Hash.new { |hash, key| hash[key] = {} }
-@names = []
 @capacity = Hash.new { |hash, key| hash[key] = {} }
+@names = []
 
 INFINITY = 1073741823
 
@@ -75,29 +66,22 @@ def augmenting_path source, sink
       end
     end
   end
-  #parent
   trace source, sink, parent
 end
 
 def max_flow source, sink
   max_flow = 0
-  min_cut = []
   path = augmenting_path source, sink
   until path.empty?
+    residuals = []
 
     flow_cap = INFINITY
-    bottleneck = []
     0.upto( path.length - 2 ) do |i|
       u, v = path[i], path[i+1]
-      residual = @capacity[u][v] - @flow[u][v]
-      if residual < flow_cap
-        flow_cap = residual
-        bottleneck = [u,v, @capacity[u][v]]
-      end
+      residuals << @capacity[u][v] - @flow[u][v]
     end
+    flow_cap = residuals.min
     max_flow += flow_cap
-    #asd = bottleneck << flow_cap
-    min_cut << bottleneck
 
     where = sink
     (path.length - 1).downto(1) do |i|
@@ -108,21 +92,45 @@ def max_flow source, sink
     end
     path = augmenting_path source, sink
   end
-  [max_flow, min_cut]
-  #@nodes[source].inject(0) { |sum, edge| sum + @flow[edge] }
+  max_flow
 end
 
-def min_cut_stuff
-  @nodes.each_pair do |key, value|
-
-
+def flood_fill source
+  queue, visited = [source], [source]
+  until queue.empty?
+    node = queue.shift
+    edges = @nodes[node] - visited
+    unless edges.empty?
+      edges.each do |e|
+        residual = @capacity[node][e] - @flow[node][e]
+        if residual > 0
+          visited << e
+          queue.push(e)
+        end
+      end
+    end
   end
-
+  visited
 end
 
-parse path
+def min_cut visited
+  keys = @nodes.keys
+  set = keys
+  set -= visited
+  min_cut = []
+  @nodes.each_pair do |node, edges|
+    edges.each do |e|
+      if visited.include?(node) && set.include?(e)
+        min_cut << [node, e, @capacity[node][e]]
+      end
+    end
+  end
+  min_cut
+end
+
+parse ARGV[0]
 
 result = max_flow 0, 54
-puts "Max flow: #{result.first}"
-min_cut = result.last
-min_cut.each { |c| puts c.inspect }
+puts "  Max flow: #{result} \n  Bottleneck arcs:\n"
+min_cut = min_cut flood_fill 0
+min_cut.each { |c| puts c.join(' ') }
