@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
-@nodes = Hash.new { |hash, key| hash[key] = [] }
-@flow  = Hash.new { |hash, key| hash[key] = {} }
+@nodes    = Hash.new { |hash, key| hash[key] = [] }
+@flow     = Hash.new { |hash, key| hash[key] = {} }
 @capacity = Hash.new { |hash, key| hash[key] = {} }
-@names = []
+@names    = []
 
-INFINITY = 1 << 32
+INFINITY = 1 << 32 #Integer Max value
 
 def max_flow source, sink
   max_flow = 0
@@ -13,6 +13,7 @@ def max_flow source, sink
     residuals = []
     flow_cap = INFINITY
 
+    #Get bottleneck capacity in path
     where = sink
     until parent[where] == source
       prev = parent[where]
@@ -22,6 +23,7 @@ def max_flow source, sink
     flow_cap = residuals.min
     max_flow += flow_cap
 
+    #Traverse path backwards and set flow
     where = sink
     until parent[where] == source
       prev = parent[where]
@@ -36,9 +38,7 @@ def max_flow source, sink
 end
 
 def augmenting_path source, sink
-  return 0 if source == sink
-  queue = [source]
-  visited = [source]
+  queue, visited = [source], [source]
   parent = {}
   until queue.empty?
     node = queue.shift
@@ -62,8 +62,7 @@ end
 
 def min_cut visited
   min_cut = []
-  keys = @nodes.keys
-  set = keys - visited
+  set = @nodes.keys - visited
   @nodes.each_pair do |node, edges|
     edges.each do |e|
       if visited.include?(node) && set.include?(e)
