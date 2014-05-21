@@ -4,7 +4,7 @@
 @capacity = Hash.new { |hash, key| hash[key] = {} }
 @names = []
 
-INFINITY = 1073741823
+INFINITY = 1 << 32
 
 def add_edge source, sink, capacity
   @nodes[source] << sink
@@ -13,7 +13,7 @@ def add_edge source, sink, capacity
   @flow[source].merge!({ sink => 0 })
   @flow[sink].merge!({ source => 0 })
 
-  capacity = 1073741823 if capacity == -1 #Max int
+  capacity = INFINITY if capacity == -1 #Max int
   @capacity[source].merge!({sink => capacity})
   @capacity[sink].merge!({source => capacity})
 end
@@ -31,18 +31,6 @@ def parse filepath
   end
 end
 
-def trace from, to, parent
-  return [] unless parent[to]
-  path = [to]
-  edge = to
-  until parent[edge] == from
-    path.unshift parent[edge]
-    edge = parent[edge]
-  end
-  path.unshift from
-  path
-end
-
 def augmenting_path source, sink
   return 0 if source == sink
   queue = [source]
@@ -50,8 +38,7 @@ def augmenting_path source, sink
   parent = {}
   until queue.empty?
     node = queue.shift
-    edges = @nodes[node]
-    edges -= visited
+    edges = @nodes[node] - visited
     unless edges.empty?
       edges.each do |e|
         residual = @capacity[node][e] - @flow[node][e]
@@ -66,31 +53,34 @@ def augmenting_path source, sink
       end
     end
   end
-  trace source, sink, parent
+  parent
 end
 
 def max_flow source, sink
   max_flow = 0
-  path = augmenting_path source, sink
-  until path.empty?
+  parent = augmenting_path source, sink
+  until parent[sink].nil?
     residuals = []
-
     flow_cap = INFINITY
-    0.upto( path.length - 2 ) do |i|
-      u, v = path[i], path[i+1]
-      residuals << @capacity[u][v] - @flow[u][v]
+
+    where = sink
+    until parent[where] == source
+      prev = parent[where]
+      residuals << @capacity[prev][where] - @flow[prev][where]
+      where = parent[where]
     end
     flow_cap = residuals.min
     max_flow += flow_cap
 
     where = sink
-    (path.length - 1).downto(1) do |i|
-      prev = path[i - 1]
+    until parent[where] == source
+      prev = parent[where]
       @flow[prev][where] += flow_cap
       @flow[where][prev] -= flow_cap
-      where = prev
+      where = parent[where]
     end
-    path = augmenting_path source, sink
+
+    parent = augmenting_path source, sink
   end
   max_flow
 end
