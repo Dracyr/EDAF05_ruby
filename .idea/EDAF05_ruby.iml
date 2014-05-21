@@ -20,7 +20,9 @@
       <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/lab6/lab6.rb" />
       <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
       <RunnerSettings RunnerId="RubyDebugRunner" />
+      <RunnerSettings RunnerId="RubyRunner" />
       <ConfigurationWrapper RunnerId="RubyDebugRunner" />
+      <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
   </component>
