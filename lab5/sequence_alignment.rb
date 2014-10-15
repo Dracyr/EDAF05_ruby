@@ -2,7 +2,7 @@ def sequence_alignment x, y
   sequence = x.last
   reference = y.last
 
-  gap = -4  
+  gap = -4
 
   rows = reference.length + 1
   cols = sequence.length + 1
@@ -25,36 +25,36 @@ def sequence_alignment x, y
   j = sequence.length
   superscore = a[i][j]
   while (i > 0 and j > 0)
-    score = a[i][j]
+    score      = a[i][j]
     score_diag = a[i-1][j-1]
-    score_up = a[i][j-1]
+    score_up   = a[i][j-1]
     score_left = a[i-1][j]
     if (score == score_diag + get_blosum(reference[i-1], sequence[j-1]))
       ref = reference[i-1] + ref
-      seq = sequence[j-1] + seq
-      i -= 1
-      j -= 1
+      seq = sequence[j-1]  + seq
+      i  -= 1
+      j  -= 1
     elsif (score == score_left + gap)
       ref = reference[i-1] + ref
       seq = '-' + seq
-      i -= 1
+      i  -= 1
     elsif (score == score_up + gap)
       ref = '-' + ref
       seq = sequence[j-1] + seq
-      j -= 1
+      j  -= 1
     end
   end
 
   while (i > 0)
     ref = reference[i-1] + ref
     seq = '-' + seq
-    i -= 1
+    i  -= 1
   end
 
   while (j > 0)
     ref = '-' + ref
     seq = sequence[j-1] + seq
-    j -= 1
+    j  -= 1
   end
 
   puts "#{x.first}--#{y.first}: #{superscore}"

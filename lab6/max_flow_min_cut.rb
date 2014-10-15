@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
-@nodes = Hash.new { |hash, key| hash[key] = [] }
-@flow  = Hash.new { |hash, key| hash[key] = {} }
+@nodes    = Hash.new { |hash, key| hash[key] = [] }
+@flow     = Hash.new { |hash, key| hash[key] = {} }
 @capacity = Hash.new { |hash, key| hash[key] = {} }
 @names = []
 
@@ -45,11 +45,11 @@ end
 
 def augmenting_path source, sink
   return 0 if source == sink
-  queue = [source]
+  queue   = [source]
   visited = [source]
-  parent = {}
+  parent  = {}
   until queue.empty?
-    node = queue.shift
+    node  = queue.shift
     edges = @nodes[node]
     edges -= visited
     unless edges.empty?
@@ -80,7 +80,7 @@ def max_flow source, sink
       u, v = path[i], path[i+1]
       residuals << @capacity[u][v] - @flow[u][v]
     end
-    flow_cap = residuals.min
+    flow_cap  = residuals.min
     max_flow += flow_cap
 
     where = sink
@@ -115,7 +115,7 @@ end
 
 def min_cut visited
   keys = @nodes.keys
-  set = keys
+  set  = keys
   set -= visited
   min_cut = []
   @nodes.each_pair do |node, edges|

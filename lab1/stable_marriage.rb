@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 @men = []
-@p_pref = {}
+@p_pref = []
 @persons = []
 @matches = {}
 @matches.default = 0
@@ -17,8 +17,10 @@ def read filename
     elsif line.match(/^\d+:[\s\d]+/) #Matches 'id: preferences'
       split = line.split(':')
       id = split.first.to_i
-      preferences = split.last.split.map! { |s| s.to_i}
-      @p_pref.merge!( id => preferences )
+      preference_array = split.last.split.map! { |s| s.to_i}
+      @p_pref[id] = preference_array if id.odd? #man
+      #@p_pref[id] = Hash[(0...preference_array.size).zip preference_array].invert if id.even? #woman
+      @p_pref[id] = Hash[[*preference_array.each_with_index.map]] if id.even? #woman            
     end
   end
   puts "Datastructure is filled"
@@ -30,7 +32,7 @@ def match
     puts "Man is #{m}:#{@persons[m]}" if @debug
     w = @p_pref[m].first
     puts "Woman is #{w}:#{@persons[w]}" if @debug
-    if @matches[w] == 0 #Woman is free
+    if @matches[w] == 0
       @matches[w] = m
       @matches[m] = w
       @men.pop
@@ -38,17 +40,17 @@ def match
     else
       m_other = @matches[w]
       puts "#{w}:#{@persons[w]} is already engaged to #{m_other}:#{@persons[m_other]}" if @debug
-      m_index = @p_pref[w].find_index(m)
-      m_other_index = @p_pref[w].find_index(m_other)
+      m_index = @p_pref[w].fetch(m)
+      m_other_index = @p_pref[w].fetch(m_other)
       puts "#{m}:#{@persons[m]}:#{m_index} vs #{m_other}:#{@persons[m_other]}:#{m_other_index}" if @debug
-      if m_index < m_other_index #New guy is better
+      if m_index < m_other_index
         @matches[w] = m
         @matches[m] = w
         @matches[m_other] = 0
         @men.pop
         @men.push(m_other)
         puts "But #{w}:#{@persons[w]} considers #{m}:#{@persons[m]} better" if @debug
-      else #Old man is the man
+      else
         puts "Tough luck #{m}:#{@persons[m]}, the old guy #{m_other}:#{@persons[m_other]} was better" if @debug
       end
     end
