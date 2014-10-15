@@ -35,7 +35,7 @@ def closest_recursive(points)
 
   min_dist = [left, right].min
 
-  yP = points.find_all { |p| (points_left[-1].x - p.x).abs < min_dist}.sort_by {|p| p.y}
+  yP = points.find_all { |p| (points_left[-1].x - p.x).abs < min_dist}.sort_by(&:y)
   closest = Float::MAX
   0.upto(yP.length - 1) do |i|
     (i+1).upto(yP.length - 1) do |k|

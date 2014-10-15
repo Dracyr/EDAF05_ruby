@@ -1,4 +1,4 @@
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( pwd )"
 for file in $1/*; do
-    ruby $DIR/conq.rb $file
+    ruby $DIR/closest_pair.rb $file
 done
